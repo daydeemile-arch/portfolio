@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration | Connexion</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/admin-login.js" defer></script>
+</head>
+<body>
+    <main class="main-container" style="display: flex; justify-content: center; align-items: center; min-height: 80vh;">
+        <div id="login-card" class="modal-card modal-card-body" style="width: 100%; max-width: 400px; display: none;">
+            <h2 style="text-align: center; margin-bottom: 1.5rem;">Espace Administrateur</h2>
+            <form id="login-form" style="display: flex; flex-direction: column; gap: 1rem;">
+                <input type="text" id="username" placeholder="Identifiant" required class="form-input">
+                <input type="password" id="password" placeholder="Mot de passe" required class="form-input">
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+        </div>
+        <div id="unauthorized-msg" style="text-align: center; display: none;">
+            <h1>404 - Page non trouvée</h1>
+        </div>
+    </main>
+</body>
+</html>
