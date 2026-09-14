@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portfolio Développeur - Présentation, Projets et Contact.">
+  <title>Portfolio | Accueil</title>
+  
+  <!-- Feuille de style principale -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Library Chart.js pour le graphique Radar (Pokémon style) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <!-- ================= HEADER & NAVIGATION ================= -->
+  <header>
+    <a href="index.html" class="logo">PORTFOLIO<span>.</span></a>
+
+    <div class="nav-container">
+      <nav>
+        <ul class="nav-menu" id="nav-menu">
+          <li><a href="index.html" class="nav-link active">Accueil</a></li>
+          <li><a href="projets.html" class="nav-link">Projets</a></li>
+          <li><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Toggle Theme Button -->
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Changer de thème">
+        <span id="theme-icon">🌙</span> 
+      </button>
+
+      <!-- Menu Hamburger Mobile -->
+      <button class="hamburger" id="hamburger" aria-label="Ouvrir le menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= CONTENU PRINCIPAL ================= -->
+  <main class="main-container">
+    
+    <!-- SECTION HERO -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <!-- Badge Disponibilité -->
+        <div class="status-badge">
+          <span class="status-dot"></span>
+          <span>Disponible pour de nouveaux projets / stage</span>
+        </div>
+
+        <h1 class="hero-title">
+          Salut, je suis <span class="highlight">Émile</span> 👋
+        </h1>
+
+        <!-- Effet Machine à écrire -->
+        <h2 class="typewriter-container">
+          <span id="typewriter"></span><span class="cursor">&nbsp;</span>
+        </h2>
+
+        <p class="hero-bio">
+          Étudiant et passionné de développement logiciel et web. J'aime concevoir des applications performantes, propres et bien architecturées.
+        </p>
+
+        <div class="hero-actions">
+          <a href="projets.html" class="btn btn-primary">Voir mes projets</a>
+          <a href="contact.html" class="btn btn-secondary">Me contacter</a>
+        </div>
+      </div>
+
+      <!-- Photo de profil dynamique -->
+      <div class="hero-image-wrapper">
+        <img 
+          src="assets/profile.jpg" 
+          alt="Photo d'Émile" 
+          id="profile-img" 
+          class="profile-img"
+          loading="lazy"
+        >
+        <p class="img-hint">Cliquer pour agrandir 🔍</p>
+      </div>
+    </section>
+
+    <!-- SECTION COMPÉTENCES : RADAR CHART (STYLE POKÉMON) -->
+    <section class="skills-section">
+      <h2 class="section-title">Mes Compétences 📊</h2>
+      <p class="section-subtitle">Pointe sur une compétence pour voir son niveau, ou clique dessus pour être redirigé vers les projets associés.</p>
+
+      <div class="radar-container">
+        <canvas id="skillsRadar"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= MODALE IMAGE PLEIN ÉCRAN ================= -->
+  <div id="image-modal" class="modal" aria-hidden="true">
+    <span class="modal-close" id="modal-close">&times;</span>
+    <img class="modal-content" id="modal-img" alt="Photo agrandie">
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer>
+    <p>&copy; 2026 Émile Daydé. Tous droits réservés.</p>
+  </footer>
+
+  <!-- Scripts JavaScript -->
+  <script src="js/main.js"></script>
+  <script src="js/radar.js"></script>
+</body>
+</html>
