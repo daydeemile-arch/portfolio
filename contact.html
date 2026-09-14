@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Contact</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/contact.js" defer></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">PORTFOLIO<span>.</span></a>
+        <div class="nav-container">
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html" class="nav-link">Accueil</a></li>
+                    <li><a href="projets.html" class="nav-link">Projets</a></li>
+                    <li><a href="contact.html" class="nav-link active">Contact</a></li>
+                </ul>
+            </nav>
+            <button id="theme-toggle" class="theme-toggle-btn"><span id="theme-icon">🌙</span></button>
+            <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <h1 class="section-title">Me Contacter 📩</h1>
+        <p class="section-subtitle">Un projet, une question ou une opportunité ? Envoyez-moi un message.</p>
+
+        <form id="contact-form" style="max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 1rem;">
+            <input type="text" id="c-name" placeholder="Votre nom" required class="form-input">
+            <input type="email" id="c-email" placeholder="Votre e-mail" required class="form-input">
+            <input type="text" id="c-subject" placeholder="Sujet" class="form-input">
+            <textarea id="c-message" placeholder="Votre message..." rows="6" required class="form-input"></textarea>
+            <button type="submit" id="c-submit" class="btn btn-primary">Envoyer le message</button>
+        </form>
+    </main>
+
+    <footer><p>&copy; 2026 Émile Daydé. Tous droits réservés.</p></footer>
+</body>
+</html>
