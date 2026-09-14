@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de bord Admin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">ADMIN<span>.</span></a>
+        <button id="logout-btn" class="btn btn-secondary">Déconnexion</button>
+    </header>
+
+    <main class="main-container">
+        <h1>Tableau de bord Administration</h1>
+        
+        <!-- SECTION 1 : GESTION DES PROJETS -->
+        <section style="margin-top: 2rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Gestion des Projets</h2>
+                <button type="button" class="btn btn-primary" onclick="openAdminModal()">+ Ajouter un projet</button>
+            </div>
+            <div id="admin-projects-list" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;"></div>
+        </section>
+
+        <!-- SECTION 2 : MESSAGES REÇUS -->
+        <section style="margin-top: 3rem;">
+            <h2>Messages de contact reçus</h2>
+            <div id="admin-messages-list" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 1rem;"></div>
+        </section>
+    </main>
+
+    <!-- MODALE AJOUT PROJET -->
+    <div id="admin-modal" class="modal" aria-hidden="true">
+        <div class="modal-card modal-card-body">
+            <span class="modal-close" onclick="closeAdminModal()">&times;</span>
+            <h2>Ajouter un nouveau projet</h2>
+
+            <form id="add-project-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                <input type="text" id="p-title" placeholder="Titre du projet" required class="form-input">
+                <textarea id="p-desc" placeholder="Description du projet" required rows="4" class="form-input"></textarea>
+                <input type="text" id="p-techs" placeholder="Technologies (ex: PHP, JavaScript, SQL)" required class="form-input">
+
+                <div id="drop-zone" class="drop-zone">
+                    <p>Glisse tes images ici ou <span class="browse-btn">parcours tes fichiers</span> (10 max)</p>
+                    <input type="file" id="p-files" multiple accept="image/*" style="display: none;">
+                </div>
+                <div id="preview-container" class="preview-container"></div>
+
+                <input type="url" id="p-github" placeholder="Lien GitHub" class="form-input">
+                <input type="url" id="p-demo" placeholder="Lien Démo (optionnel)" class="form-input">
+                <button type="submit" id="submit-btn" class="btn btn-primary">Publier le projet</button>
+            </form>
+        </div>
+    </div>
+
+    <footer><p>&copy; 2026 Émile Daydé. Tous droits réservés.</p></footer>
+</body>
+</html>
