@@ -12,12 +12,27 @@ function initSupabase() {
   }
 }
 
+// Extraction propre des images (gère le JSON stringifié, les tableaux ou les chaînes uniques)
+function parseProjectImages(imageUrlData) {
+  if (!imageUrlData) return [];
+  if (Array.isArray(imageUrlData)) return imageUrlData;
+  if (typeof imageUrlData === 'string') {
+    try {
+      const parsed = JSON.parse(imageUrlData);
+      return Array.isArray(parsed) ? parsed : [parsed];
+    } catch {
+      return [imageUrlData];
+    }
+  }
+  return [];
+}
+
 // FONCTION GLOBALE POUR OUVRIR LA MODALE ADMIN
 window.openAdminModal = function() {
   const adminModal = document.getElementById('admin-modal');
   if (adminModal) {
     adminModal.classList.add('open');
-    adminModal.style.display = 'flex'; // Sécurité d'affichage
+    adminModal.style.display = 'flex';
   }
 };
 
@@ -47,19 +62,31 @@ document.addEventListener('DOMContentLoaded', () => {
     adminBtn.style.display = isAdmin ? 'inline-block' : 'none';
   }
 
-  // Écouteur de fermeture sur la croix
   if (adminModalClose) {
     adminModalClose.onclick = () => window.closeAdminModal();
   }
 
-  // Fermeture en cliquant sur le fond noir
   window.addEventListener('click', (e) => {
     if (e.target === adminModal) {
       window.closeAdminModal();
     }
   });
 
-  // 2. GESTION DU DRAG & DROP DES IMAGES
+  // 2. GESTION DES CHAMPS DYNAMIQUES DE TECHNOLOGIES (MODALE ADMIN)
+  const techContainer = document.getElementById('tech-inputs-container');
+  document.getElementById('add-tech-btn')?.addEventListener('click', () => {
+    if (!techContainer) return;
+    const div = document.createElement('div');
+    div.style.display = 'flex';
+    div.style.gap = '0.5rem';
+    div.innerHTML = `
+      <input type="text" class="form-input p-tech-input" placeholder="ex: JavaScript" required>
+      <button type="button" class="btn btn-secondary" onclick="this.parentElement.remove()" style="padding: 0 0.8rem;">&times;</button>
+    `;
+    techContainer.appendChild(div);
+  });
+
+  // 3. GESTION DU DRAG & DROP DES IMAGES
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('p-files');
   const previewContainer = document.getElementById('preview-container');
@@ -108,32 +135,61 @@ document.addEventListener('DOMContentLoaded', () => {
     `).join('');
   }
 
-  // 3. FILTRAGE DES PROJETS
-  function filterProjects(tech) {
-    const filterBtns = document.querySelectorAll('.filter-btn');
-    filterBtns.forEach(btn => {
-      const btnTech = btn.dataset.tech.toLowerCase();
-      btn.classList.toggle('active', btnTech === tech.toLowerCase() || (tech === 'all' && btnTech === 'all'));
+  // 4. GENERATION DYNAMIQUE DES FILTRES ET FILTRAGE INTERACTIF
+  function generateDynamicFilters(projects) {
+    if (!filterBar) return;
+
+    const techSet = new Set();
+
+    projects.forEach(p => {
+      let techs = p.technologies;
+      if (typeof techs === 'string') {
+        techs = techs.split(',').map(t => t.trim());
+      }
+      if (Array.isArray(techs)) {
+        techs.forEach(t => t && techSet.add(t.trim()));
+      }
     });
 
-    if (tech === 'all') {
+    filterBar.innerHTML = `<button class="filter-btn active" data-tech="all">Tous</button>`;
+
+    techSet.forEach(tech => {
+      const btn = document.createElement('button');
+      btn.className = 'filter-btn';
+      btn.dataset.tech = tech;
+      btn.textContent = tech;
+      filterBar.appendChild(btn);
+    });
+  }
+
+  function filterProjects(selectedTech) {
+    const buttons = document.querySelectorAll('.filter-btn');
+    buttons.forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.tech.toLowerCase() === selectedTech.toLowerCase());
+    });
+
+    if (selectedTech === 'all') {
       renderProjects(allProjects);
     } else {
-      const filtered = allProjects.filter(p => 
-        p.technologies && p.technologies.toLowerCase().includes(tech.toLowerCase())
-      );
+      const filtered = allProjects.filter(p => {
+        let techs = p.technologies;
+        if (typeof techs === 'string') techs = techs.split(',').map(t => t.trim());
+        if (Array.isArray(techs)) {
+          return techs.some(t => t.toLowerCase() === selectedTech.toLowerCase());
+        }
+        return false;
+      });
       renderProjects(filtered);
     }
   }
 
   filterBar?.addEventListener('click', (e) => {
     if (e.target.classList.contains('filter-btn')) {
-      const selectedTech = e.target.dataset.tech;
-      filterProjects(selectedTech);
+      filterProjects(e.target.dataset.tech);
     }
   });
 
-  // 4. CHARGEMENT ET AFFICHAGE DES PROJETS
+  // 5. CHARGEMENT ET AFFICHAGE DES PROJETS
   async function fetchProjects() {
     if (!supabaseClient) {
       if (grid) grid.innerHTML = `<p class="loading-text">Erreur de connexion avec la base de données.</p>`;
@@ -149,6 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (error) throw error;
 
       allProjects = data || [];
+      generateDynamicFilters(allProjects);
       renderProjects(allProjects);
 
       const techParam = urlParams.get('tech');
@@ -168,13 +225,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!grid) return;
 
     if (projects.length === 0) {
-      grid.innerHTML = `<p class="loading-text">Aucun projet ne correspond à cette technologie.</p>`;
+      grid.innerHTML = `<p class="loading-text">Aucun projet ne correspond à ce filtre.</p>`;
       return;
     }
 
     grid.innerHTML = projects.map(p => {
-      const techArray = p.technologies ? p.technologies.split(',').map(t => t.trim()) : [];
-      const coverImage = p.image_url || (p.images && p.images[0]) || '';
+      let techList = [];
+      if (Array.isArray(p.technologies)) techList = p.technologies;
+      else if (typeof p.technologies === 'string') techList = p.technologies.split(',').map(t => t.trim());
+
+      const images = parseProjectImages(p.image_url || p.images);
+      const coverImage = images[0] || 'img/placeholder.jpg';
+
       return `
         <article class="project-card" onclick="openProjectModal(${p.id})">
           <img src="${coverImage}" alt="${p.title}" class="project-card-img" loading="lazy">
@@ -182,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <h3 class="project-card-title">${p.title}</h3>
             <p class="project-card-desc">${p.description}</p>
             <div class="tech-tags">
-              ${techArray.map(t => `<span class="tech-tag">${t}</span>`).join('')}
+              ${techList.map(t => `<span class="tech-tag">${t}</span>`).join('')}
             </div>
           </div>
         </article>
@@ -190,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  // 5. SOUMISSION DU FORMULAIRE D'AJOUT + UPLOAD STORAGE
+  // 6. SOUMISSION DU FORMULAIRE D'AJOUT (ADMIN) + UPLOAD STORAGE
   document.getElementById('add-project-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -224,12 +286,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Extraction des technologies saisies dans la modale
+      const techInputs = document.querySelectorAll('.p-tech-input');
+      const techList = Array.from(techInputs).map(i => i.value.trim()).filter(v => v.length > 0);
+
       const newProject = {
         title: document.getElementById('p-title').value,
         description: document.getElementById('p-desc').value,
-        technologies: document.getElementById('p-techs').value,
-        images: uploadedUrls,
-        image_url: uploadedUrls[0] || '',
+        technologies: techList,
+        image_url: uploadedUrls,
         github_url: document.getElementById('p-github').value || null,
         demo_url: document.getElementById('p-demo').value || null
       };
@@ -264,14 +329,17 @@ window.openProjectModal = function(id) {
   const project = allProjects.find(p => p.id === id);
   if (!project) return;
 
-  const mainImage = project.image_url || (project.images && project.images[0]) || '';
-  document.getElementById('project-modal-img').src = mainImage;
+  const images = parseProjectImages(project.image_url || project.images);
+  document.getElementById('project-modal-img').src = images[0] || 'img/placeholder.jpg';
   document.getElementById('project-modal-title').textContent = project.title;
   document.getElementById('project-modal-desc').textContent = project.description;
 
   const techContainer = document.getElementById('project-modal-techs');
-  const techArray = project.technologies ? project.technologies.split(',').map(t => t.trim()) : [];
-  techContainer.innerHTML = techArray.map(t => `<span class="tech-tag">${t}</span>`).join('');
+  let techList = [];
+  if (Array.isArray(project.technologies)) techList = project.technologies;
+  else if (typeof project.technologies === 'string') techList = project.technologies.split(',').map(t => t.trim());
+
+  techContainer.innerHTML = techList.map(t => `<span class="tech-tag">${t}</span>`).join('');
 
   const githubBtn = document.getElementById('project-modal-github');
   githubBtn.href = project.github_url || '#';

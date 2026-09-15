@@ -58,14 +58,9 @@
             </button>
         </div>
 
-        <!-- Barre de filtres par Technologie -->
+        <!-- Barre de filtres générée dynamiquement par JS -->
         <div class="filter-bar" id="filter-bar">
             <button class="filter-btn active" data-tech="all">Tous</button>
-            <button class="filter-btn" data-tech="JavaScript">JavaScript</button>
-            <button class="filter-btn" data-tech="PHP">PHP</button>
-            <button class="filter-btn" data-tech="C#">C# / .NET</button>
-            <button class="filter-btn" data-tech="Python">Python</button>
-            <button class="filter-btn" data-tech="TypeScript">TypeScript</button>
         </div>
 
         <!-- Grille des cartes Projets -->
@@ -103,8 +98,15 @@
                 <input type="text" id="p-title" placeholder="Titre du projet" required class="form-input">
                 <textarea id="p-desc" placeholder="Description du projet" required rows="4"
                     class="form-input"></textarea>
-                <input type="text" id="p-techs" placeholder="Technologies (ex: PHP, JavaScript, SQL)" required
-                    class="form-input">
+                
+                <!-- Champs dynamiques pour les technologies -->
+                <div>
+                    <label style="font-weight: bold; margin-bottom: 0.5rem; display: block;">Technologies :</label>
+                    <div id="tech-inputs-container" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <input type="text" class="form-input p-tech-input" placeholder="ex: PHP" required>
+                    </div>
+                    <button type="button" id="add-tech-btn" class="btn btn-secondary" style="margin-top: 0.5rem; font-size: 0.85rem;">+ Ajouter une technologie</button>
+                </div>
 
                 <!-- Zone Drag & Drop pour jusqu'à 10 images -->
                 <div id="drop-zone" class="drop-zone">
